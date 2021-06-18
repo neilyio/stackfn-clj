@@ -55,7 +55,7 @@ This goal leads to a major implementation decision: a `defstackfn` definiton sho
   )
 ```
 
-Assuming low gensym numbers, our implemenation of `defstackfn` would `macroexpand` the above definition to:
+Assuming low gensym numbers, our implementation of `defstackfn` would `macroexpand` the above definition to:
 
 ```clj
 (def f
