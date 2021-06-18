@@ -63,7 +63,7 @@
   "Given a collection, return a lazy sequence with f applied to the first
   element of the collection, and the rest of the collection unchanged."
   [f coll]
-  (map-indexed #(if (= %1 0) (f %2) %2) col))
+  (map-indexed #(if (= %1 0) (f %2) %2) coll))
 
 
 (defn format-compile-error
