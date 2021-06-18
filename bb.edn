@@ -1,0 +1,33 @@
+{:tasks
+ {:requires ([clojure.java.shell :refer [sh]]
+             [clojure.string :as str])
+  :init     (do
+              (defn str-quote [s] (str/join s ["'" "'"]))
+              (defn str-space [& xs] (str/join " " xs))
+
+
+              (def *pwd*           (-> "pwd" sh :out str/trim-newline))
+              (def *image*         "neilyio/rpl-interpreter")
+              (def *docker-build*  (str-space "docker build --tag" *image*))
+              (def *docker-run*    (str-space
+                                    "docker run"
+                                    "--rm"
+                                    "--interactive"
+                                    "--tty"
+                                    "--publish 7888:7888" ; match Dockerfile
+                                    "--volume"
+                                    (str *pwd* ":/root/rpl-interpreter")
+                                    )))
+
+  build     (shell (str-space *docker-build* "."))
+
+  build-dbg (shell (str-space *docker-build*
+                              "--progress" "plain"
+                              "--no-cache"
+                              "."))
+
+  start     (shell (str-space *docker-run* *image*))
+
+  nrepl     (shell (str-space *docker-run* *image* "-M:nrepl"))
+
+  shell     (shell (str-space *docker-run* "--entrypoint /bin/bash" *image*))}}

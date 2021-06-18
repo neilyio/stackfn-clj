@@ -1,0 +1,11 @@
+;; deps.edn is loaded automatically by the clojure command,
+;; as long as its the working directory.
+{:deps {cider/cider-nrepl {:mvn/version "0.26.0"}
+        io.aviso/pretty   {:mvn/version "1.1"}}
+ :aliases
+ {:nrepl
+  {:main-opts
+   ["--main" "nrepl.cmdline"
+    "--bind" "0.0.0.0" ;; Default is 127.0.0.1, but must be 0.0.0.0 for Docker.
+    "--port" "7888"    ;; Canonical nREPL default port.
+    "--middleware" "[cider.nrepl/cider-middleware]"]}}}
