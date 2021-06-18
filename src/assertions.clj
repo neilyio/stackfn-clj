@@ -1,6 +1,6 @@
 (ns assertions
-  (:require [clojure.string :as s]
-            [utilities :as u]))
+  (:require [src.clojure.string :as s]
+            [src.utilities :as u]))
 
 
 (defn assert-variable

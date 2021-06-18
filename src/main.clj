@@ -1,8 +1,8 @@
 (ns clean
   (:require
-   [utilities :as u]
-   [assertions :as a]
-   [stack :refer [compile> invoke> if> <pop>]]))
+   [src.utilities :as u]
+   [src.assertions :as a]
+   [src.stack :refer [compile> invoke> if> <pop>]]))
 
 (defmacro defstackfn
   "Given a name, a vector of vars, and a variable number of forms, return a

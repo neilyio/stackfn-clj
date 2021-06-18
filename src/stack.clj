@@ -1,6 +1,6 @@
 (ns stack
-  (:require [utilities :as u]
-            [assertions :as a]))
+  (:require [src.utilities :as u]
+            [src.assertions :as a]))
 
 
 (defn def>
