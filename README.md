@@ -81,7 +81,9 @@ The `!a:1` symbol format is derived from user-passed arguments concatenated with
 
 `compile>`, therefore, does not "evaluate", but "transpiles". It only concerns itself with symbols and lists of symbols, and has no knowledge of actual values. Its main considerations are shuffling around s-expressions, and ensuring that the forms passed to `defstackfn` will output valid Clojure code.
 
-Our third design goal leverages the nature of a stack-based language to create highly-expressive error messages. The syntax of our `stackfn` language allows us to infer a good deal of information about the `:stack` at compile time. Before the developer can even evaluate `defstackfn`, we can make perform analysis that can alert them to unbound variables, incorrect syntax, and invalid stack heights. For an example, you can modify the third form of our test case (`(invoke> + 2)`) to cause a stack error by change it to (`(invoke> + 3)`). When you try and evaluate the surrounding `defstackfn`, an error message will helpfully point out your mistake by including the follwing `ex-info`:
+Our third design goal leverages the nature of a stack-based language to create highly-expressive error messages. The syntax of our `stackfn` language allows us to infer a good deal of information about the `:stack` at compile time. Before the developer can even evaluate `defstackfn`, we can make perform analysis that can alert them to unbound variables, incorrect syntax, and invalid stack heights.
+
+As an example, you can modify the third form of our test case (`(invoke> + 2)`) to cause a stack error by change it to (`(invoke> + 3)`). When you try and evaluate the surrounding `defstackfn`, an error message will helpfully point out your mistake by including the follwing `ex-info`:
 
 ```clj
    Incorrect stack height
@@ -102,4 +104,33 @@ Our third design goal leverages the nature of a stack-based language to create h
 
 ## Key Functions
 
-## Development Setup
+As we're tasked with reading and evaluating a language, many our functions are named in the tradition of Lisp parsing. We can split up the important functions into a few categories:
+
+### Stackfn operators
+
+These are functions used within the stack language to manipulate stack values. The developer who uses our stack language may want to define more of these, so they have a extensible specification. Each one may accept any number of arguments and should return a function that takes an `env-map` (a structure of `({ :bindings ... :stack ... })`) and returns and `env-map`.
+
+#### invoke>
+Takes the symbol of a function and an arity. It consumes "arity" number of items from the `:stack` as arguments for the function. It places the result back on the stack.
+
+#### if>
+Accepts a list of forms which represent logical branches. The "true" branch is the first set of forms before the `else>` symbol, and the "false" branch follows.
+
+#### \<pop>
+Accepts no arguments, and removes a function from the stack. `<pop>` is listed as a "special form". It does not need to be wrapped in parenthesis like the other stackfn operators. When detected by `eval>`, it will implicitly be wrapped in parentheses and called like the other operators.
+ 
+### Evaluation operators
+
+#### compile>
+Transforms a list of "forms" (passed to `defstackfn`) into Clojure s-expressions, which are stored in the `:stack` structure.
+
+#### eval>
+Adds forms to the `:stack`. If necessary, replace the form with the appropriate suffix-ed binding.
+
+#### apply>
+Evaluates a `stackfn` operator, and then passes the `env-map` to the returned function. Places the resulting value onto the `:stack`.
+
+#### def>
+Takes the first value from `:stack` and assigns it to the `:bindings` map.
+
+ 
